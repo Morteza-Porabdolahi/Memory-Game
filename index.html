@@ -3,10 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="/assets/css/normalize.css">
     <link rel="stylesheet" href="/assets/css/index.css">
     <title>Document</title>
 </head>
 <body>
+    <section class="app flex">
+        <section class="app__game flex-column">
+            <div class="game__game-stats flex">
+                <button class="game-stats__start">Start</button>
+                <div class="game-stats__stats flex-column">
+                    <span class="game-stats__moves">
+                        <span class="game-stats__moves-count">0</span>
+                        moves
+                    </span>
+                    <span class="game-stats__time">
+                        time: 
+                        <span class="game-stats__time-tick">0 sec</span>
+                    </span>
+                </div>
+            </div>
+            <div class="app__game-body">
+                <div class="game-body__wrapper">
+                  <div class="game-body__cards"></div>
+                </div>
+            </div>
+        </section>
+    </section>
     
     <script src="/assets/js/index.js"></script>
 </body>

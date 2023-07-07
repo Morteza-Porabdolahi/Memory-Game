@@ -5,11 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="/assets/css/normalize.css">
+    <link rel="stylesheet" href="/assets/css/animate.min.css">
+    <link rel="stylesheet" href="/assets/css/aos.css">
     <link rel="stylesheet" href="/assets/css/index.css">
     <title>Document</title>
 </head>
 <body>
     <section class="app flex">
+        <section class="app__select-grid">
+            <section class="select-grid__grids flex">
+                <div class="fadeInTopLeft grids__grid" data-grid="4*4" data-grid-number="16">
+                    <div class="grid__preview">
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                    </div>
+                    <span class="grid__grid-number">4&times;4</span>
+                </div>
+                <div class="fadeInDown grids__grid" data-grid="5*4" data-grid-number="20">
+                    <div class="grid__preview">
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                    </div>
+                    <span class="grid__grid-number">5&times;4</span>
+                </div>
+                <div class="fadeInTopRight grids__grid" data-grid="6*5" data-grid-number="30">
+                    <div class="grid__preview">
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                        <div class="grid__box"></div>
+                    </div>
+                    <span class="grid__grid-number">6&times;5</span>
+                </div>
+            </section>
+        </section>
         <section class="app__game flex-column">
             <div class="game__game-stats flex">
                 <button class="game-stats__start">Start</button>
@@ -26,12 +113,17 @@
             </div>
             <div class="app__game-body">
                 <div class="game-body__wrapper">
-                  <div class="game-body__cards"></div>
+                    <div class="game-body__win-wrapper hidden">
+                        <h2 class="win-wrapper__win-title">You Win !</h2>
+                        <p class="win-wrapper__win-description">You win the game with <span id="moves"></span> moves in <span id="time"></span> seconds !</p>
+                    </div>
+                  <div class="game-body__cards" data-grid="4*4"></div>
                 </div>
             </div>
         </section>
     </section>
     
+    <script src="/assets/js/aos.js"></script>
     <script src="/assets/js/index.js"></script>
 </body>
 </html>

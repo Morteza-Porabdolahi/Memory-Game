@@ -1,0 +1,94 @@
+@keyframes bounce {
+    0% {
+        rotate: 0;
+    }
+
+    25% {
+        rotate: 5deg;
+    }
+
+    50% {
+        rotate: -5deg;
+    }
+
+    100% {
+        rotate: 0;
+    }
+}
+
+@keyframes fadeInTopRight {
+    0% {
+        -webkit-transform: translate3d(100%, -100%, 0);
+        transform: translate3d(100%, -100%, 0)
+    }
+
+    to {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0)
+    }
+}
+
+@keyframes fadeInTopLeft {
+    0% {
+        -webkit-transform: translate3d(-100%, -100%, 0);
+        transform: translate3d(-100%, -100%, 0)
+    }
+
+    to {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0)
+    }
+}
+
+@keyframes fadeInTopDown {
+    0% {
+        -webkit-transform: translate3d(-100%, -100%, 0);
+        transform: translate3d(-100%, -100%, 0)
+    }
+
+    to {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0)
+    }
+}
+
+@keyframes fadeInDown {
+    0% {
+        -webkit-transform: translate3d(0, -100%, 0);
+        transform: translate3d(0, -100%, 0)
+    }
+
+    to {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0)
+    }
+}
+
+.fadeInTopRight,
+.fadeInTopLeft,
+.fadeInDown {
+    animation-delay: 0;
+}
+
+.fadeInTopRight {
+    animation: fadeInTopRight .8s;
+}
+
+.fadeInTopLeft {
+    animation: fadeInTopLeft .8s;
+}
+
+.fadeInDown {
+    animation: fadeInDown .8s;
+}
+
+$i: 1000;
+
+@while $i < 3000 {
+    // do stuff
+    $i: $i +50;
+
+    [data-duration="#{$i}"] {
+        animation-duration: #{$i}ms;
+    }
+}

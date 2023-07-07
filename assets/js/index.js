@@ -1,144 +1,213 @@
 window.onload = function () {
-  fetchImages();
+	const _ = document;
 
-  let flippedCard = 0,
-    firstCard,
-    secondCard,
-    moveCount = 0,
-    cardsCount = 16,
-    timer;
+	let flippedCard = 0,
+		firstCard,
+		secondCard,
+		moveCount = 0,
+		cardsCount = 16,
+		timer,
+		seconds = 0;
 
-  const movesElement = document.querySelector(".game-stats__moves-count");
-  const startBtn = document.querySelector(".game-stats__start");
+	const movesElement = _.querySelector(".game-stats__moves-count"),
+		startBtn = _.querySelector(".game-stats__start"),
+		cardsContainer = _.querySelector(".game-body__cards"),
+		winAreaContainer = _.querySelector(".game-body__win-wrapper"),
+		secondsElement = _.querySelector(".game-stats__time-tick");
 
-  function addEventToCards() {
-    const cards = document.querySelectorAll(".cards__card:not(.flipped)");
+	_.querySelectorAll(".grids__grid").forEach((gridElem) =>
+		gridElem.addEventListener("click", selectGird)
+	);
 
-    cards.forEach((card) => card.addEventListener("click", flipTheCard));
-  }
+	function selectGird() {
+		const imagesNumber = parseInt(this.dataset.gridNumber) / 2;
 
-  function removeCardsEvent() {
-    const cards = document.querySelectorAll(".cards__card");
+		cardsContainer.setAttribute("data-grid", this.dataset.grid);
+		fetchImages(imagesNumber).then((images) => {
+			shuffleImages(images);
+		});
+	}
 
-    cards.forEach((card) => card.removeEventListener("click", flipTheCard));
-  }
+	async function fetchImages(imagesNumber = 8) {
+		try {
+			const response = await fetch(
+				`https://picsum.photos/v2/list?limit=${imagesNumber}`
+			);
 
-  function startGame() {
-    let secondsElement = document.querySelector(".game-stats__time-tick");
-    let seconds = 0;
+			if (response.status === 200 && response.ok) {
+				return response.json();
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	}
 
-    addEventToCards();
-    timer = setInterval(() => {
-      seconds++;
-      secondsElement.textContent = `${seconds} ${
-        seconds === 0 || seconds === 1 ? "sec" : "secs"
-      }`;
-    }, 1000);
-  }
+	function shuffleImages(images = []) {
+		const shuffled = shuffleArray(
+			[...images, ...images].map((image) => ({
+				url: image.download_url,
+				id: image.id,
+			}))
+		);
 
-  async function fetchImages() {
-    const controller = new AbortController();
-    const signal = controller.signal;
+		createCardsWithImages(shuffled);
+	}
 
-    try {
-      const response = await fetch("https://picsum.photos/v2/list?limit=8", {
-        signal,
-      });
+	function shuffleArray(arr = []) {
+		return arr
+			.map((item) => ({ item, sort: Math.random() }))
+			.sort((a, b) => a.sort - b.sort)
+			.map(({ item }) => item);
+	}
 
-      if (response.status === 200 && response.ok) {
-        const images = await response.json();
-        shuffleImages(images);
-      }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      controller.abort();
-    }
-  }
+	function createCardsWithImages(images = []) {
+		// Animation default duration
+		let duration = 1000;
+		const template = _.createElement("template");
 
-  function shuffleImages(images = []) {
-    const shuffled = shuffleArray(
-      [...images, ...images].map((image) => ({
-        url: image.download_url,
-        id: image.id,
-      }))
-    );
-
-    createCardsWithImages(shuffled);
-  }
-
-  function shuffleArray(arr = []) {
-    return arr
-      .map((item) => ({ item, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ item }) => item);
-  }
-
-  function createCardsWithImages(images = []) {
-    const template = document.createElement("template");
-
-    images.forEach((image) => {
-      template.innerHTML += `
-        <div class="cards__card" data-card="${image.id}">
+		images.forEach((image) => {
+			template.innerHTML += `
+        <div onclick="notifyUser()" class="${
+					window.innerWidth > 768 ? "fadeInTopRight" : ""
+				} cards__card" data-duration="${(duration += 50)}" data-card="${
+				image.id
+			}">
             <div class="card__face">
                 <img src="${image.url}" alt="Card Image">
             </div>
             <div class="card__back"></div>
         </div>`;
-    });
+		});
 
-    appendCardsIntoDom(template.content);
-  }
+		appendCardsIntoDom(template.content);
 
-  function appendCardsIntoDom(cardsFragment) {
-    const cardsContainer = document.querySelector(".game-body__cards");
+		winAreaContainer.classList.add("hidden");
+		cardsContainer.classList.remove("hidden");
 
-    cardsContainer.append(cardsFragment);
-    
-    startBtn.addEventListener("click", startGame);
-  }
+		hideGridSelection();
+	}
 
-  function flipTheCard(e) {
-    let card = e.target.closest(".cards__card");
+	function appendCardsIntoDom(cardsFragment) {
+		cardsContainer.innerHTML = "";
 
-    card.classList.add("flipped");
-    flippedCard++;
-    moveCount++;
+		cardsContainer.append(cardsFragment);
+		startBtn.addEventListener("click", startGame);
+	}
 
-    if (flippedCard === 1) {
-      firstCard = card;
-    } else if (flippedCard === 2) {
-      secondCard = card;
+	function startGame() {
+		addEventToCards();
 
-      removeCardsEvent();
+		timer = setInterval(() => {
+			seconds++;
+			secondsElement.textContent = `${seconds} ${
+				seconds === 0 || seconds === 1 ? "sec" : "secs"
+			}`;
+		}, 1000);
 
-      if (firstCard.dataset.card !== secondCard.dataset.card) {
-        setTimeout(() => {
-          firstCard.classList.remove("flipped");
-          secondCard.classList.remove("flipped");
+		this.removeEventListener("click", startGame);
+		this.addEventListener("click", restartGame);
+		startBtn.textContent = "Restart";
+	}
 
-          addEventToCards();
-        }, 1000);
-      } else {
-        addEventToCards();
-        checkPlayerState();
-      }
+	function restartGame() {
+		showGridSelection();
+		this.removeEventListener("click", restartGame);
 
-      flippedCard = 0;
-    }
+		startBtn.textContent = "Start";
 
-    movesElement.textContent = moveCount;
-  }
+		movesElement.textContent = 0;
+		secondsElement.textContent = 0;
 
-  function checkPlayerState() {
-    const flippedCardsLength = document.querySelectorAll(
-      ".cards__card.flipped"
-    ).length;
+		moveCount = 0;
+		resetStats();
+	}
 
-    if (flippedCardsLength === cardsCount) {
-      clearInterval(timer);
-      moveCount = 0;
-      flippedCard = 0;
-    }
-  }
+	function resetStats() {
+		clearInterval(timer);
+
+		flippedCard = 0;
+		seconds = 0;
+	}
+
+	function addEventToCards() {
+		const cards = _.querySelectorAll(".cards__card:not(.flipped)");
+
+		cards.forEach((card) => {
+			card.removeAttribute("onclick");
+			card.addEventListener("click", flipTheCard);
+		});
+	}
+
+	function flipTheCard(e) {
+		let card = e.target.closest(".cards__card");
+
+		card.classList.add("flipped");
+
+		flippedCard++;
+		moveCount++;
+
+		if (flippedCard === 1) {
+			firstCard = card;
+		} else if (flippedCard === 2) {
+			secondCard = card;
+
+			removeCardsEvent();
+
+			if (firstCard.dataset.card !== secondCard.dataset.card) {
+				setTimeout(() => {
+					firstCard.classList.remove("flipped");
+					secondCard.classList.remove("flipped");
+
+					addEventToCards();
+				}, 1000);
+			} else {
+				addEventToCards();
+				checkPlayerState();
+			}
+
+			flippedCard = 0;
+		}
+
+		movesElement.textContent = moveCount;
+	}
+
+	window.notifyUser = function () {
+		startBtn.focus();
+	};
+
+	function removeCardsEvent() {
+		const cards = _.querySelectorAll(".cards__card");
+
+		cards.forEach((card) => card.removeEventListener("click", flipTheCard));
+	}
+
+	function hideGridSelection() {
+		const selectGridContainer = _.querySelector(".app__select-grid");
+
+		selectGridContainer.classList.add("hidden");
+	}
+
+	function showGridSelection() {
+		const selectGridContainer = _.querySelector(".app__select-grid");
+
+		selectGridContainer.classList.remove("hidden");
+	}
+
+	function checkPlayerState() {
+		const flippedCardsLength = _.querySelectorAll(
+			".cards__card.flipped"
+		).length;
+
+		if (flippedCardsLength === cardsCount) {
+			winAreaContainer.querySelector("#time").textContent = seconds;
+			winAreaContainer.querySelector("#moves").textContent = moveCount;
+
+			setTimeout(() => {
+				winAreaContainer.classList.remove("hidden");
+				cardsContainer.classList.add("hidden");
+			}, 800);
+
+			resetStats();
+		}
+	}
 };
